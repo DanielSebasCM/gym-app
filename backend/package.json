@@ -1,15 +1,21 @@
 {
   "name": "backend",
   "version": "1.0.50",
+  "prisma": {
+    "seed": "bun run prisma/seed.ts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@prisma/client": "5.4.2",
     "elysia": "latest"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "prisma": "^5.4.2"
   },
-  "module": "src/index.js"
+  "module": "src/index.js",
+  "prettier" : {}
 }

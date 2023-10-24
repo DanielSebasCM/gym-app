@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  roleId   String @id @default(uuid())
+  roleName String @unique @db.VarChar(50)
+  users    User[]
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model User {
+  userId           String            @id @default(uuid())
+  firstName        String            @db.VarChar(50)
+  secondName       String?           @db.VarChar(50)
+  lastName         String            @db.VarChar(50)
+  secondLastName   String?           @db.VarChar(50)
+  googleId         String?           @unique @db.VarChar
+  birthDate        DateTime          @db.Date
+  sex              Sex
+  roles            Role[]
+  routineTemplates RoutineTemplate[]
+}
+
+model Tag {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique @db.VarChar(50)
+  routineTemplates  RoutineTemplate[]
+  exerciseTemplates ExerciseTemplate[]
+  childTags         Tag[]              @relation("TagToTag")
+  childTagsRelation Tag[]              @relation("TagToTag")
+}
+
+model RoutineTemplate {
+  routineTemplateId String             @id @default(uuid())
+  title             String             @db.VarChar(50)
+  description       String?            @db.VarChar(50)
+  userIdFK          String?            @db.VarChar
+  user              User?              @relation(fields: [userIdFK], references: [userId])
+  tags              Tag[]
+  exerciseTemplates ExerciseTemplate[]
+  routineExecutions RoutineExecution[]
+}
+
+model RoutineExecution {
+  routineExecutionId String              @id @default(uuid())
+  notes              String?             @db.VarChar(1024)
+  routineTemplateFK  String
+  routineTemplate    RoutineTemplate     @relation(fields: [routineTemplateFK], references: [routineTemplateId])
+  ExerciseExecutions ExerciseExecution[]
+}
+
+model ExerciseTemplate {
+  exerciseTemplateId String              @id @default(uuid())
+  title              String              @db.VarChar(50)
+  description        String?             @db.VarChar
+  routineTemplates   RoutineTemplate[]
+  tags               Tag[]
+  exerciseExecutions ExerciseExecution[]
+}
+
+model ExerciseExecution {
+  exerciseExecutionId String           @id @default(uuid())
+  notes               String?          @db.VarChar(1024)
+  exerciseTemplateFK  String
+  exerciseTemplate    ExerciseTemplate @relation(fields: [exerciseTemplateFK], references: [exerciseTemplateId])
+  setExecutions       SetExecution[]
+  routineExecutionFK  String
+  routineExecution    RoutineExecution @relation(fields: [routineExecutionFK], references: [routineExecutionId])
+}
+
+model SetExecution {
+  setExecutionId      String            @id @default(uuid())
+  notes               String            @db.VarChar(1024)
+  exerciseExecutionFK String            @map("exerciseFK")
+  exerciseExecution    ExerciseExecution @relation(fields: [exerciseExecutionFK], references: [exerciseExecutionId])
+}
