@@ -16,6 +16,5 @@
     "bun-types": "latest",
     "prisma": "^5.4.2"
   },
-  "module": "src/index.js",
-  "prettier" : {}
+  "module": "src/index.js"
 }
