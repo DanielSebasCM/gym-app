@@ -86,5 +86,5 @@ model SetExecution {
   setExecutionId      String            @id @default(uuid())
   notes               String            @db.VarChar(1024)
   exerciseExecutionFK String            @map("exerciseFK")
-  exerciseExecution    ExerciseExecution @relation(fields: [exerciseExecutionFK], references: [exerciseExecutionId])
+  exerciseExecution   ExerciseExecution @relation(fields: [exerciseExecutionFK], references: [exerciseExecutionId])
 }

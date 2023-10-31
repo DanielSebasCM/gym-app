@@ -1,11 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-async function run() {
-  console.log("Running seed script...");
+async function run(overwrite = false) {
+  console.info("Running seed script...");
   console.time();
 
   try {
+    if (overwrite) {
+      await prisma.routineExecution.deleteMany();
+      await prisma.routineTemplate.deleteMany();
+      await prisma.tag.deleteMany();
+      await prisma.role.deleteMany();
+      await prisma.user.deleteMany();
+      await prisma.exerciseExecution.deleteMany();
+      await prisma.exerciseTemplate.deleteMany();
+    }
+
     await prisma.role.createMany({
       data: [
         { roleName: "admin" },
@@ -14,7 +24,7 @@ async function run() {
       ],
     });
 
-    await prisma.user.create({
+    const mockUser = await prisma.user.create({
       data: {
         firstName: "Daniel",
         secondName: "Sebastian",
@@ -26,13 +36,26 @@ async function run() {
         },
       },
     });
+
+    await prisma.tag.createMany({
+      data: [{ name: "push" }, { name: "pull" }, { name: "legs" }],
+    });
+
+    await prisma.routineTemplate.create({
+      data: {
+        title: "Push Routine",
+        description: "A routine for a push day",
+        user: { connect: { userId: mockUser.userId } },
+        tags: { connect: [{ name: "push" }] },
+      },
+    });
   } catch (error) {
     console.error("Error running the seed script: ");
     console.error(error);
   } finally {
-    console.log("Finished running seed script");
+    console.info("Finished running seed script");
     console.timeEnd();
   }
 }
 
-await run();
+await run(Boolean(process.env.OVERWRITE_DB) || false);
