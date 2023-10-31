@@ -41,12 +41,21 @@ async function run(overwrite = false) {
       data: [{ name: "push" }, { name: "pull" }, { name: "legs" }],
     });
 
-    await prisma.routineTemplate.create({
+    const routine = await prisma.routineTemplate.create({
       data: {
         title: "Push Routine",
         description: "A routine for a push day",
         user: { connect: { userId: mockUser.userId } },
         tags: { connect: [{ name: "push" }] },
+      },
+    });
+
+    await prisma.routineExecution.create({
+      data: {
+        notes: "This is a note",
+        routineTemplate: {
+          connect: { routineTemplateId: routine.routineTemplateId },
+        },
       },
     });
   } catch (error) {
