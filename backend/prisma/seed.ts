@@ -1,21 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-async function run(overwrite = false) {
+async function run() {
   console.info("Running seed script...");
   console.time();
-
   try {
-    if (overwrite) {
-      await prisma.routineExecution.deleteMany();
-      await prisma.routineTemplate.deleteMany();
-      await prisma.tag.deleteMany();
-      await prisma.role.deleteMany();
-      await prisma.user.deleteMany();
-      await prisma.exerciseExecution.deleteMany();
-      await prisma.exerciseTemplate.deleteMany();
-    }
-
     await prisma.role.createMany({
       data: [
         { roleName: "admin" },
@@ -26,6 +15,7 @@ async function run(overwrite = false) {
 
     const mockUser = await prisma.user.create({
       data: {
+        email: "daniel@mail.com",
         firstName: "Daniel",
         secondName: "Sebastian",
         lastName: "Cajas",
@@ -67,4 +57,4 @@ async function run(overwrite = false) {
   }
 }
 
-await run(Boolean(process.env.OVERWRITE_DB) || false);
+await run();

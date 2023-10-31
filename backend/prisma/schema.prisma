@@ -24,6 +24,7 @@ enum Sex {
 
 model User {
   userId           String            @id @default(uuid())
+  email            String            @unique @db.VarChar
   firstName        String            @db.VarChar(50)
   secondName       String?           @db.VarChar(50)
   lastName         String            @db.VarChar(50)
