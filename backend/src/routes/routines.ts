@@ -16,7 +16,13 @@ export const routineApp = new Elysia()
       .get("/", async () => await RoutineService.getRoutineTemplates())
       .post(
         "/",
-        async ({ body }) => await RoutineService.postRoutineTemplate(body),
+        async ({ body }) => {
+          try {
+            return await RoutineService.postRoutineTemplate(body);
+          } catch {
+            return { error: "Error creating routine template" };
+          }
+        },
         {
           body: RoutineTemplateSchema,
         }
