@@ -6,9 +6,15 @@ export class RoutineService {
     return await prisma.routineTemplate.findMany();
   }
 
-  static async getRoutineWithExecutions(id: string) {
+  static async getRoutineTemplate(routineTemplateId: string) {
     return await prisma.routineTemplate.findUnique({
-      where: { routineTemplateId: id },
+      where: { routineTemplateId },
+    });
+  }
+
+  static async getRoutineWithExecutions(routineTemplateId: string) {
+    return await prisma.routineTemplate.findUnique({
+      where: { routineTemplateId },
       include: { routineExecutions: true },
     });
   }
