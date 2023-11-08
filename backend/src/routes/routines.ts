@@ -28,6 +28,18 @@ export const routineApp = new Elysia()
           body: RoutineTemplateSchema,
         }
       )
+      .get("/:templateId", async ({ params, set }) => {
+        const routine = await RoutineService.getRoutineTemplate(
+          params.templateId
+        );
+
+        if (!routine) {
+          set.status = 404;
+          return { error: "Routine template not found" };
+        }
+
+        return routine;
+      })
   )
   .get("/executions/:templateId", async ({ params, set }) => {
     const routine = await RoutineService.getRoutineWithExecutions(
