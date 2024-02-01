@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Role {
-  roleId   String @id @default(uuid())
+  roleId   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   roleName String @unique @db.VarChar(50)
   users    User[]
 }
@@ -23,7 +23,7 @@ enum Sex {
 }
 
 model User {
-  userId           String            @id @default(uuid())
+  userId           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email            String            @unique @db.VarChar
   firstName        String            @db.VarChar(50)
   secondName       String?           @db.VarChar(50)
@@ -37,7 +37,7 @@ model User {
 }
 
 model Tag {
-  id                Int                @id @default(autoincrement())
+  id                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name              String             @unique @db.VarChar(50)
   routineTemplates  RoutineTemplate[]
   exerciseTemplates ExerciseTemplate[]
@@ -46,26 +46,26 @@ model Tag {
 }
 
 model RoutineTemplate {
-  routineTemplateId String             @id @default(uuid())
+  routineTemplateId String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title             String             @db.VarChar(50)
   description       String?            @db.VarChar(50)
-  userIdFK          String?            @db.VarChar
   user              User?              @relation(fields: [userIdFK], references: [userId])
+  userIdFK          String             @db.Uuid
   tags              Tag[]
   exerciseTemplates ExerciseTemplate[]
   routineExecutions RoutineExecution[]
 }
 
 model RoutineExecution {
-  routineExecutionId String              @id @default(uuid())
+  routineExecutionId String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   notes              String?             @db.VarChar(1024)
-  routineTemplateFK  String
+  routineTemplateFK  String              @db.Uuid
   routineTemplate    RoutineTemplate     @relation(fields: [routineTemplateFK], references: [routineTemplateId])
   ExerciseExecutions ExerciseExecution[]
 }
 
 model ExerciseTemplate {
-  exerciseTemplateId String              @id @default(uuid())
+  exerciseTemplateId String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title              String              @db.VarChar(50)
   description        String?             @db.VarChar
   routineTemplates   RoutineTemplate[]
@@ -74,18 +74,18 @@ model ExerciseTemplate {
 }
 
 model ExerciseExecution {
-  exerciseExecutionId String           @id @default(uuid())
+  exerciseExecutionId String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   notes               String?          @db.VarChar(1024)
-  exerciseTemplateFK  String
+  exerciseTemplateFK  String           @db.Uuid
   exerciseTemplate    ExerciseTemplate @relation(fields: [exerciseTemplateFK], references: [exerciseTemplateId])
   setExecutions       SetExecution[]
-  routineExecutionFK  String
+  routineExecutionFK  String           @db.Uuid
   routineExecution    RoutineExecution @relation(fields: [routineExecutionFK], references: [routineExecutionId])
 }
 
 model SetExecution {
-  setExecutionId      String            @id @default(uuid())
+  setExecutionId      String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   notes               String            @db.VarChar(1024)
-  exerciseExecutionFK String            @map("exerciseFK")
+  exerciseExecutionFK String            @map("exerciseFK") @db.Uuid
   exerciseExecution   ExerciseExecution @relation(fields: [exerciseExecutionFK], references: [exerciseExecutionId])
 }
